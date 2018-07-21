@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <title>Pong project</title>
+</head>
+<body>
+  <audio id="clouc" >
+    <source src="assets/sound/clouc.mp3" type="audio/mpeg">
+  </audio>
+  <script src="assets/js/processing.min.js"></script>
+  <script type="text/processing" data-processing-target="pongProject">
+  import processing.sound.*;
+  //variable de la balle
+  var rad = 10;
+  var posX = 200;
+  var posY = 10;
+  var sX = -1/2;
+  var sY = 1/2;
+  //variable de la page
+  var width = 400;
+  var height = 400;
+  //var pour le pad
+  var heightPad = 40;
+  var widthPad = 10;
+  var padY = 0;
+  var yPad = 0;
+  var wallPad = 10;
+  var padWall = 380;
+  //timer
+  var timer = 0;
+  //setup
+  var clouc = document.querySelector('#clouc');
+  void setup(){
+    size(width,height);
+    frameRate(120);
+    PFont fontA = loadFont("courier");
+    textFont(fontA, 20);
+  }
+  //
+  void draw(){
+    //timer
+    timer += 1/120;
+    background(0);
+    fill(0,255,0);
+    text(timer,190,200);
+    delta();
+    //ball
+    fill(255);
+    ellipse(posX,posY,rad,rad);
+    //pad
+    fill(255,0,0);
+    rect(wallPad,padY,widthPad,heightPad);
+    fill(0,0,255);
+    rect(padWall,yPad,widthPad,heightPad);
+    //red pad
+    if (keyPressed) {
+      //redpad
+      if (key == 's' && padY < height-heightPad) {
+        padY += 1.5;
+      }
+      if (key == 'z' && padY > 0) {
+        padY += -1.5;
+      }
+    }
+    yPad = posY - heightPad/2;
+    if (posX > wallPad && posX < wallPad + widthPad && posY > padY && posY < padY + heightPad) {
+      sX = sX * -1;
+      clouc.play();
+    }
+    if (posX < padWall && posX > padWall - widthPad && posY > yPad && posY < yPad + heightPad) {
+      sX = sX * -1;
+      sX += -0.3/2;
+      sY += -0.2/2;
+      clouc.play();
+    }
+    if (posX < 0 + rad) {
+      posX = 300;
+      posY = 200;
+      sX = -1/2;
+      timer = 0;
+    }
+  }
+
+  //
+  function delta(){
+    posX += sX;
+    posY += sY;
+    //rebondi haut/bas
+    if (posY > height || posY < 0) {
+      sY = sY * -1;
+    }
+  }
+</script>
+<canvas id="pongProject" style="margin-left:25%"></canvas>
+</body>
+</html>
